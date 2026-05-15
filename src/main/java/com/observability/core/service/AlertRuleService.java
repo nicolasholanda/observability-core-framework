@@ -5,8 +5,8 @@ import com.observability.core.domain.enums.AlertSeverity;
 import com.observability.core.domain.enums.Percentile;
 import com.observability.core.domain.model.AlertRule;
 import com.observability.core.domain.model.ServiceEndpoint;
+import com.observability.core.exception.ResourceNotFoundException;
 import com.observability.core.repository.AlertRuleRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class AlertRuleService {
     @Transactional(readOnly = true)
     public AlertRule findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("AlertRule not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("AlertRule not found: " + id));
     }
 
     @Transactional(readOnly = true)

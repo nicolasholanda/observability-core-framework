@@ -1,8 +1,9 @@
 package com.observability.core.service;
 
 import com.observability.core.domain.model.ServiceEndpoint;
+import com.observability.core.exception.ConflictException;
+import com.observability.core.exception.ResourceNotFoundException;
 import com.observability.core.repository.ServiceEndpointRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ public class ServiceEndpointService {
     @Transactional
     public ServiceEndpoint create(String serviceName, String endpointPath, String httpMethod) {
         if (repository.existsByServiceNameAndEndpointPathAndHttpMethod(serviceName, endpointPath, httpMethod)) {
-            throw new IllegalArgumentException("Endpoint already registered: " + httpMethod + " " + serviceName + endpointPath);
+            throw new ConflictException("Endpoint already registered: " + httpMethod + " " + serviceName + endpointPath);
         }
         ServiceEndpoint endpoint = ServiceEndpoint.builder()
                 .serviceName(serviceName)
@@ -31,7 +32,7 @@ public class ServiceEndpointService {
     @Transactional(readOnly = true)
     public ServiceEndpoint findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ServiceEndpoint not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("ServiceEndpoint not found: " + id));
     }
 
     @Transactional(readOnly = true)
